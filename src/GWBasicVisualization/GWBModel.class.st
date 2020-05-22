@@ -3,14 +3,24 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'functions',
-		'lineNumber'
+		'lineNumber',
+		'file',
+		'files'
 	],
 	#category : #GWBasicVisualization
 }
 
 { #category : #'as yet unclassified' }
-GWBModel >> importFileAsText: aString [
+GWBModel >> currentFile [
+	self assert: [ files notEmpty ].
+	^ files last
+]
 
+{ #category : #'as yet unclassified' }
+GWBModel >> importFileAsText: aString [
+	file := GWBFile new.
+	files add: file.
+	
 	aString lines doWithIndex: [ :l :i | 
 		lineNumber := i.
 		self processLine: l ]
@@ -19,12 +29,14 @@ GWBModel >> importFileAsText: aString [
 { #category : #initialization }
 GWBModel >> initialize [
 	super initialize.
-	functions := OrderedCollection new
+	files := OrderedCollection new.
+ 
 ]
 
 { #category : #initialization }
 GWBModel >> numberOfFunctions [
-	^ functions size
+	files isEmpty ifTrue: [ ^ 0 ].
+	^ (files collect: #numberOfFunctions) sum 
 ]
 
 { #category : #'as yet unclassified' }
@@ -38,5 +50,5 @@ GWBModel >> processLine: l [
 		f := GWBFunction new.
 		f name: ss first.
 		f lineNumber: lineNumber.
-		functions add: f. ]
+		self currentFile addFunction: f ]
 ]
