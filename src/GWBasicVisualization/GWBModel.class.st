@@ -9,6 +9,11 @@ Class {
 	#category : #GWBasicVisualization
 }
 
+{ #category : #navigating }
+GWBModel >> allFunctions [
+	^ self files flatCollect: #functions
+]
+
 { #category : #'as yet unclassified' }
 GWBModel >> currentFile [
 	self assert: [ files notEmpty ].
@@ -73,4 +78,16 @@ GWBModel >> processLine: l [
 	f := self currentFunction.
 	
 	(#('CALL' 'JZ') includes: ss first) ifTrue: [ f addCalledFunctionsName: ss second ]
+]
+
+{ #category : #navigating }
+GWBModel >> resolve [
+	| d calledFunction |
+	d := (self allFunctions collect: [ :f | f name -> f ]) asDictionary.
+	self allFunctions do: [ :f |
+		f calledFunctionNames do: [ :fName |
+			(d includesKey: fName) ifTrue: [ 
+				calledFunction := d at: fName.
+				f addOutgoingCall: calledFunction.
+				calledFunction addIncomingCall: f ] ] ]
 ]

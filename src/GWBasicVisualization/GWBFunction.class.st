@@ -20,6 +20,16 @@ GWBFunction >> addCalledFunctionsName: aName [
 	calledFunctionsNames add: aName
 ]
 
+{ #category : #adding }
+GWBFunction >> addIncomingCall: f [
+	incomingFunctions add: f
+]
+
+{ #category : #adding }
+GWBFunction >> addOutgoingCall: f [
+	outgoingFunctions add: f
+]
+
 { #category : #'as yet unclassified' }
 GWBFunction >> calledFunctionNames [
 	^ calledFunctionsNames
@@ -55,10 +65,12 @@ GWBFunction >> incomingFunctions: anObject [
 	incomingFunctions := anObject
 ]
 
-{ #category : #initialization }
+{ #category : #adding }
 GWBFunction >> initialize [
 	super initialize.
-	calledFunctionsNames := OrderedCollection new
+	outgoingFunctions := OrderedCollection new.
+	incomingFunctions := OrderedCollection new.
+	calledFunctionsNames := OrderedCollection new.
 ]
 
 { #category : #accessing }

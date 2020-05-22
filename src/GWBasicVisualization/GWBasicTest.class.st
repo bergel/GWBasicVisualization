@@ -134,6 +134,14 @@ GWBasicTest >> testParseExample [
 ]
 
 { #category : #tests }
+GWBasicTest >> testParseExampleAndResolve [
+
+	m importFileAsText: self sourceCode.
+	m resolve.
+
+]
+
+{ #category : #tests }
 GWBasicTest >> testParsing [
 
 	self deny: m inAFunction
