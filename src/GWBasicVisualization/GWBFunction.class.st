@@ -2,6 +2,7 @@ Class {
 	#name : #GWBFunction,
 	#superclass : #Object,
 	#instVars : [
+		'file',
 		'name',
 		'incomingFunctions',
 		'outgoingFunctions',
@@ -12,6 +13,16 @@ Class {
 	],
 	#category : #GWBasicVisualization
 }
+
+{ #category : #accessing }
+GWBFunction >> file [
+	^ file
+]
+
+{ #category : #accessing }
+GWBFunction >> file: anObject [
+	file := anObject
+]
 
 { #category : #accessing }
 GWBFunction >> fileName [

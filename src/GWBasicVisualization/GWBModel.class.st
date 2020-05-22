@@ -4,7 +4,6 @@ Class {
 	#instVars : [
 		'functions',
 		'lineNumber',
-		'file',
 		'files'
 	],
 	#category : #GWBasicVisualization
@@ -17,13 +16,31 @@ GWBModel >> currentFile [
 ]
 
 { #category : #'as yet unclassified' }
+GWBModel >> currentFunction [
+	^ self currentFile functions last 
+]
+
+{ #category : #accessing }
+GWBModel >> files [
+	^ files
+]
+
+{ #category : #'as yet unclassified' }
 GWBModel >> importFileAsText: aString [
-	file := GWBFile new.
-	files add: file.
+	| f |
+	f := GWBFile new.
+	files add: f.
 	
 	aString lines doWithIndex: [ :l :i | 
 		lineNumber := i.
 		self processLine: l ]
+]
+
+{ #category : #'as yet unclassified' }
+GWBModel >> inAFunction [
+	files ifEmpty: [ ^ false ].
+	self currentFile functions ifEmpty: [ ^ false ].
+	^ true
 ]
 
 { #category : #initialization }
@@ -50,5 +67,6 @@ GWBModel >> processLine: l [
 		f := GWBFunction new.
 		f name: ss first.
 		f lineNumber: lineNumber.
-		self currentFile addFunction: f ]
+		self currentFile addFunction: f ].
+	self inAFunction ifFalse: [ ^ self ]
 ]

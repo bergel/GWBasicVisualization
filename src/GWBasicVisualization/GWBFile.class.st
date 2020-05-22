@@ -12,6 +12,11 @@ GWBFile >> addFunction: f [
 	functions add: f
 ]
 
+{ #category : #accessing }
+GWBFile >> functions [
+	^ functions
+]
+
 { #category : #adding }
 GWBFile >> initialize [
 	super initialize.

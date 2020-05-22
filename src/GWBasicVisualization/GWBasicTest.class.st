@@ -122,6 +122,19 @@ GWBasicTest >> testEmpty [
 { #category : #tests }
 GWBasicTest >> testParseExample [
 
+	| f |
 	m importFileAsText: self sourceCode.
-	self assert: m numberOfFunctions equals: 9
+	self assert: m numberOfFunctions equals: 9.
+
+	f := m files first.
+	self assert: f numberOfFunctions equals: 9.
+	self assert: f functions third name equals: 'CALLS1:'.
+	
+
+]
+
+{ #category : #tests }
+GWBasicTest >> testParsing [
+
+	self deny: m inAFunction
 ]
