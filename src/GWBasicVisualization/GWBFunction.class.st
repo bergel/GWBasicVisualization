@@ -9,10 +9,21 @@ Class {
 		'lineNumber',
 		'fileName',
 		'length',
-		'sourceCode'
+		'sourceCode',
+		'calledFunctionsNames'
 	],
 	#category : #GWBasicVisualization
 }
+
+{ #category : #initialization }
+GWBFunction >> addCalledFunctionsName: aName [
+	calledFunctionsNames add: aName
+]
+
+{ #category : #'as yet unclassified' }
+GWBFunction >> calledFunctionNames [
+	^ calledFunctionsNames
+]
 
 { #category : #accessing }
 GWBFunction >> file [
@@ -42,6 +53,12 @@ GWBFunction >> incomingFunctions [
 { #category : #accessing }
 GWBFunction >> incomingFunctions: anObject [
 	incomingFunctions := anObject
+]
+
+{ #category : #initialization }
+GWBFunction >> initialize [
+	super initialize.
+	calledFunctionsNames := OrderedCollection new
 ]
 
 { #category : #accessing }

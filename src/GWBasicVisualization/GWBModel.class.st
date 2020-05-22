@@ -65,8 +65,12 @@ GWBModel >> processLine: l [
 	"We are defining a new function"
 	ss first last = $: ifTrue: [ 
 		f := GWBFunction new.
-		f name: ss first.
+		f name: ss first allButLast.
 		f lineNumber: lineNumber.
 		self currentFile addFunction: f ].
-	self inAFunction ifFalse: [ ^ self ]
+	self inAFunction ifFalse: [ ^ self ].
+
+	f := self currentFunction.
+	
+	(#('CALL' 'JZ') includes: ss first) ifTrue: [ f addCalledFunctionsName: ss second ]
 ]

@@ -128,8 +128,8 @@ GWBasicTest >> testParseExample [
 
 	f := m files first.
 	self assert: f numberOfFunctions equals: 9.
-	self assert: f functions third name equals: 'CALLS1:'.
-	
+	self assert: f functions third name equals: 'CALLS1'.
+	self assert: f functions third calledFunctionNames asArray equals: #( 'PRODIR' 'PTRGET' 'VMOVFM' 'FRQINT' 'GETSTK' 'CHRGT2' 'CALLST' 'SYNCHR' )
 
 ]
 
