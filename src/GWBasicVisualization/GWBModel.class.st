@@ -96,7 +96,8 @@ GWBModel >> processLine: l [
 		f := GWBFunction new.
 		f name: ss first allButLast.
 		f lineNumber: lineNumber.
-		self currentFile addFunction: f ].
+		self currentFile addFunction: f.
+		f file: self currentFile ].
 	self inAFunction ifFalse: [ ^ self ].
 
 	f := self currentFunction.

@@ -146,3 +146,11 @@ GWBasicTest >> testParsing [
 
 	self deny: m inAFunction
 ]
+
+{ #category : #tests }
+GWBasicTest >> testParsing2 [
+
+	m importFileAsText: self sourceCode.
+	self assert: (m allFunctions collect: #file as: Set) size equals: 1.
+	self assert: m allFunctions first file equals: m files first
+]
