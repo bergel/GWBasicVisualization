@@ -2,7 +2,8 @@ Class {
 	#name : #GWBFile,
 	#superclass : #Object,
 	#instVars : [
-		'functions'
+		'functions',
+		'name'
 	],
 	#category : #GWBasicVisualization
 }
@@ -21,6 +22,16 @@ GWBFile >> functions [
 GWBFile >> initialize [
 	super initialize.
 	functions := OrderedCollection new
+]
+
+{ #category : #accessing }
+GWBFile >> name [
+	^ name
+]
+
+{ #category : #accessing }
+GWBFile >> name: anObject [
+	name := anObject
 ]
 
 { #category : #initialization }

@@ -113,6 +113,14 @@ GWBFunction >> outgoingFunctions: anObject [
 	outgoingFunctions := anObject
 ]
 
+{ #category : #printing }
+GWBFunction >> printOn: str [
+	super printOn: str.
+	str nextPut: $<.
+	str nextPutAll: self name.
+	str nextPut: $>.
+]
+
 { #category : #accessing }
 GWBFunction >> sourceCode [
 	^ sourceCode

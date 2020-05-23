@@ -30,15 +30,39 @@ GWBModel >> files [
 	^ files
 ]
 
+{ #category : #navigating }
+GWBModel >> gtInspectorViewIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal3
+		title: 'View';
+		initializeCanvas: [ self visualize ]
+]
+
 { #category : #'as yet unclassified' }
 GWBModel >> importFileAsText: aString [
+	self importFileAsText: aString named: 'UNNAMED.ASM'
+]
+
+{ #category : #'as yet unclassified' }
+GWBModel >> importFileAsText: aString named: aFileName [
 	| f |
 	f := GWBFile new.
+	f name: aFileName.
 	files add: f.
 	
 	aString lines doWithIndex: [ :l :i | 
 		lineNumber := i.
 		self processLine: l ]
+]
+
+{ #category : #'as yet unclassified' }
+GWBModel >> importFromFolderNamed: aFullnameAsString [
+
+	(aFullnameAsString asFileReference children) do: [ :f |
+		(f basename endsWith: '.ASM')
+			ifTrue: [ self importFileAsText: f contents named: f basename ]
+	].
+	self resolve.
 ]
 
 { #category : #'as yet unclassified' }
@@ -77,17 +101,47 @@ GWBModel >> processLine: l [
 
 	f := self currentFunction.
 	
-	(#('CALL' 'JZ') includes: ss first) ifTrue: [ f addCalledFunctionsName: ss second ]
+	(#('CALL' 'JZ' 'JMP' 'JNZ' 'JB') includes: ss first) ifTrue: [ f addCalledFunctionsName: (ss copyWithout: 'SHORT') second ]
 ]
 
 { #category : #navigating }
 GWBModel >> resolve [
 	| d calledFunction |
-	d := (self allFunctions collect: [ :f | f name -> f ]) asDictionary.
+	d := Dictionary new.
+	self allFunctions do: [ :f | d at: f name put: f ].
+	
+	"Does not work because there are some duplicated keys"
+	"d := (self allFunctions select: [:f | (f name beginsWith: '??') not ] thenCollect: [ :f | f name -> f ]) asDictionary."
+	
 	self allFunctions do: [ :f |
 		f calledFunctionNames do: [ :fName |
 			(d includesKey: fName) ifTrue: [ 
 				calledFunction := d at: fName.
 				f addOutgoingCall: calledFunction.
 				calledFunction addIncomingCall: f ] ] ]
+]
+
+{ #category : #'as yet unclassified' }
+GWBModel >> run [
+	<script: 'self new run inspect'>
+	self importFromFolderNamed: '/Users/alexandrebergel/Desktop/GW-BASIC'
+]
+
+{ #category : #navigating }
+GWBModel >> visualize [
+	| c shapes eb |
+	c := RSCanvas new.
+	shapes := self allFunctions 
+		collect: [ :f | RSEllipse new size: 10; color: Color blue translucent; model: f ] as: RSGroup.
+	c addAll: shapes.
+	shapes @ RSPopup.
+	
+	eb := RSEdgeBuilder line.
+	eb canvas: c.
+	eb shapes: shapes.
+	eb connectToAll: #outgoingFunctions.
+	RSForceBasedLayout on: shapes.
+	c @ RSCanvasController.
+	
+	^ c
 ]
