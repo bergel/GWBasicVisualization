@@ -134,10 +134,11 @@ GWBModel >> visualize [
 	shapes := self allFunctions 
 		collect: [ :f | RSEllipse new size: 10; color: Color blue translucent; model: f ] as: RSGroup.
 	c addAll: shapes.
-	shapes @ RSPopup.
+	shapes @ RSPopup @ RSDraggable.
 	
 	eb := RSEdgeBuilder line.
 	eb canvas: c.
+	eb moveBehind.
 	eb shapes: shapes.
 	eb connectToAll: #outgoingFunctions.
 	RSForceBasedLayout on: shapes.
