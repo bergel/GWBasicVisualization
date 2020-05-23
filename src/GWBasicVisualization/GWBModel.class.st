@@ -31,11 +31,19 @@ GWBModel >> files [
 ]
 
 { #category : #navigating }
-GWBModel >> gtInspectorViewIn: composite [
+GWBModel >> gtInspectorFilesIn: composite [
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3
-		title: 'View';
-		initializeCanvas: [ self visualize ]
+		title: 'Files';
+		initializeCanvas: [ self visualizeFiles ]
+]
+
+{ #category : #navigating }
+GWBModel >> gtInspectorFunctionsIn: composite [
+	<gtInspectorPresentationOrder: -10>
+	composite roassal3
+		title: 'Functions';
+		initializeCanvas: [ self visualizeFunctions ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -48,6 +56,7 @@ GWBModel >> importFileAsText: aString named: aFileName [
 	| f |
 	f := GWBFile new.
 	f name: aFileName.
+	f numberOfLinesOfCode: aString lines size.
 	files add: f.
 	
 	aString lines doWithIndex: [ :l :i | 
@@ -129,7 +138,36 @@ GWBModel >> run [
 ]
 
 { #category : #navigating }
-GWBModel >> visualize [
+GWBModel >> visualizeFiles [
+	| c shapes eb |
+	c := RSCanvas new.
+	shapes := self files 
+		collect: [ :f | RSBox new size: 10; color: Color blue translucent; model: f ] as: RSGroup.
+	c addAll: shapes.
+	shapes @ RSPopup @ RSDraggable.
+	
+	eb := RSEdgeBuilder line.
+	eb moveBehind.
+	eb shape color: Color gray translucent.
+	eb canvas: c.
+	eb moveBehind.
+	eb shapes: shapes.
+	eb connectToAll: #outgoingFiles.
+	
+	RSNormalizer size
+		shapes: shapes;
+		from: 5;
+		to: 20;
+		normalize: #numberOfLinesOfCode.
+	
+	RSForceBasedLayout new charge: -400; on: shapes.
+	c @ RSCanvasController.
+	
+	^ c
+]
+
+{ #category : #navigating }
+GWBModel >> visualizeFunctions [
 	| c shapes eb |
 	c := RSCanvas new.
 	shapes := self allFunctions 
@@ -143,6 +181,13 @@ GWBModel >> visualize [
 	eb shapes: shapes.
 	eb connectToAll: #outgoingFunctions.
 	RSForceBasedLayout on: shapes.
+	"RSGridLayout on: shapes."
+	
+	RSNormalizer color
+		shapes: shapes;
+		scale: NSScale category20b;
+		normalize: [ :fun | files indexOf: fun file ].
+	
 	c @ RSCanvasController.
 	
 	^ c
