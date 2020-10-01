@@ -11,74 +11,108 @@ Class {
 
 { #category : #navigating }
 GWBModel >> allFunctions [
+	"&begin[Computing]"
 	^ self files flatCollect: #functions
+	"&end[Computing]"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'private - parsing' }
 GWBModel >> currentFile [
+	"&begin[File]"
+	"&begin[Assertion]"
 	self assert: [ files notEmpty ].
+	"&end[Assertion]"
 	^ files last
+	"&end[File]"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'private - parsing' }
 GWBModel >> currentFunction [
+	"&begin[Computing]"
 	^ self currentFile functions last 
+	"&end[Computing]"
 ]
 
 { #category : #accessing }
 GWBModel >> files [
+	"&begin[File]"
 	^ files
+	"&end[File]"
 ]
 
 { #category : #navigating }
 GWBModel >> gtInspectorFilesIn: composite [
+	"&begin[Inspector]"
+	"&begin[Visualization]"
 	<gtInspectorPresentationOrder: -10>
 	composite roassal3
 		title: 'Files';
 		initializeCanvas: [ self visualizeFiles ]
+	"&end[Visualization]"
+	"&end[Inspector]"
 ]
 
 { #category : #navigating }
 GWBModel >> gtInspectorFunctionsIn: composite [
 	<gtInspectorPresentationOrder: -10>
+	"&begin[Inspector]"
+	"&begin[Visualization]"
 	composite roassal3
 		title: 'Functions';
 		initializeCanvas: [ self visualizeFunctions ]
+	"&end[Visualization]"
+	"&end[Inspector]"
+	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'public - importing' }
 GWBModel >> importFileAsText: aString [
+	"&begin[Import]"
 	self importFileAsText: aString named: 'UNNAMED.ASM'
+	"&end[Import]"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'public - importing' }
 GWBModel >> importFileAsText: aString named: aFileName [
+	"&begin[Import]"
 	| f |
+	"&begin[Modeling]"
 	f := GWBFile new.
 	f name: aFileName.
 	f numberOfLinesOfCode: aString lines size.
 	files add: f.
-	
+	"&end[Modeling]"
+
+	"&begin[Parsing]"
 	aString lines doWithIndex: [ :l :i | 
 		lineNumber := i.
 		self processLine: l ]
+	"&end[Parsing]"
+	"&end[Import]"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'public - importing' }
 GWBModel >> importFromFolderNamed: aFullnameAsString [
-
+	"&begin[Parsing]"
 	(aFullnameAsString asFileReference children) do: [ :f |
 		(f basename endsWith: '.ASM')
 			ifTrue: [ self importFileAsText: f contents named: f basename ]
 	].
+	"&end[Parsing]"
+	"&begin[SymbolResolution]"
 	self resolve.
+	"&end[SymbolResolution]"
+	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'private - parsing' }
 GWBModel >> inAFunction [
+	"&begin[File]"
 	files ifEmpty: [ ^ false ].
 	self currentFile functions ifEmpty: [ ^ false ].
+	"&end[SymbolResolution]"
 	^ true
+	
 ]
 
 { #category : #initialization }
@@ -90,32 +124,41 @@ GWBModel >> initialize [
 
 { #category : #initialization }
 GWBModel >> numberOfFunctions [
+	"&begin[Metric]"
 	files isEmpty ifTrue: [ ^ 0 ].
 	^ (files collect: #numberOfFunctions) sum 
+	"&end[Metric]"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'private - parsing' }
 GWBModel >> processLine: l [
+	"&begin[Parsing]"
 	| ss f |
 	ss := l substrings: String tab, ' '.
 	ss ifEmpty: [ ^ self ].
 	
 	"We are defining a new function"
 	ss first last = $: ifTrue: [ 
+		"&begin[Modeling]"
 		f := GWBFunction new.
 		f name: ss first allButLast.
 		f lineNumber: lineNumber.
+		"&end[Modeling]"
 		self currentFile addFunction: f.
 		f file: self currentFile ].
 	self inAFunction ifFalse: [ ^ self ].
-
+	"&end[Parsing]"
+	
 	f := self currentFunction.
 	
+	"&begin[Cleaning]"
 	(#('CALL' 'JZ' 'JMP' 'JNZ' 'JB') includes: ss first) ifTrue: [ f addCalledFunctionsName: (ss copyWithout: 'SHORT') second ]
+	"&end[Cleaning]"
 ]
 
 { #category : #navigating }
 GWBModel >> resolve [
+	"&begin[SymbolResolution]"
 	| d calledFunction |
 	d := Dictionary new.
 	self allFunctions do: [ :f | d at: f name put: f ].
@@ -129,16 +172,21 @@ GWBModel >> resolve [
 				calledFunction := d at: fName.
 				f addOutgoingCall: calledFunction.
 				calledFunction addIncomingCall: f ] ] ]
+	"&end[SymbolResolution]"
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'public - running' }
 GWBModel >> run [
+	"&begin[Example]"
 	<script: 'self new run inspect'>
-	self importFromFolderNamed: '/Users/alexandrebergel/Desktop/GW-BASIC'
+	self importFromFolderNamed: '/Users/alexandrebergel/Dropbox/GitRepos/GW-BASIC'
+	"&end[Example]"
+
 ]
 
 { #category : #navigating }
 GWBModel >> visualizeFiles [
+	"&begin[Visualization]"
 	| c shapes eb |
 	c := RSCanvas new.
 	shapes := self files 
@@ -164,10 +212,12 @@ GWBModel >> visualizeFiles [
 	c @ RSCanvasController.
 	
 	^ c
+	"&end[Visualization]"
 ]
 
 { #category : #navigating }
 GWBModel >> visualizeFunctions [
+	"&begin[Visualization]"
 	| c shapes eb |
 	c := RSCanvas new.
 	shapes := self allFunctions 
@@ -191,4 +241,5 @@ GWBModel >> visualizeFunctions [
 	c @ RSCanvasController.
 	
 	^ c
+	"&end[Visualization]"
 ]
