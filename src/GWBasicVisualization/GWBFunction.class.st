@@ -26,7 +26,7 @@ GWBFunction >> addCalledFunctionsName: aName [
 GWBFunction >> addIncomingCall: f [
 	"&begin[Adding]"
 	incomingFunctions add: f
-	"&begin[End]"
+	"&end[Adding]"
 ]
 
 { #category : #adding }
