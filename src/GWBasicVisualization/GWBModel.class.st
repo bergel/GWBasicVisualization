@@ -179,6 +179,7 @@ GWBModel >> resolve [
 GWBModel >> run [
 	"&begin[Example]"
 	<script: 'self new run inspect'>
+	"To have it to run, you need to downoad the GWBasic repository from: http://github.com/dspinellis/GW-BASIC"
 	self importFromFolderNamed: '/Users/alexandrebergel/Dropbox/GitRepos/GW-BASIC'
 	"&end[Example]"
 
