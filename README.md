@@ -1,4 +1,7 @@
 # GWBasicVisualization
+
+[![Build Status](https://travis-ci.com/bergel/GWBasicVisualization.svg?branch=master)](https://travis-ci.com/bergel/GWBasicVisualization)
+
 Visualizing GW-Basic source code, written in assembly, using [Roassal3](https://github.com/ObjectProfile/Roassal3) and [Pharo](http://pharo.org).
 
 The following pictures show the invocation between the routines from the repository http://github.com/dspinellis/GW-BASIC
